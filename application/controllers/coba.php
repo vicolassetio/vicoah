@@ -5,7 +5,8 @@ if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 		function __construct(){
 			parent::__construct();
 			$this->load->model('v_model');
-	}
+		}
+
 		public function index(){
 			$data['v_table'] = $this->v_model->test()->result();
 			$this->load->view('v_index',$data);
@@ -23,6 +24,7 @@ if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 					'id'=>$id,
 					'kategori'=>$kategori
 					);
+				
 			$this->v_model->input_data($data,'v_table');
 			if($isAddAll==TRUE){
 				redirect('coba/index');
@@ -112,18 +114,26 @@ if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 					$return = array('result'=>'failed','file'=>'','error'=>$this->upload->display_errors());
 				}
 
-				if(isset($iddetails[$key])){
+				if(isset($isdelete[$key]) && $isdelete[$key]==2){
 					$where = array(
-					'id'=>$id,
-					'iddetails'=>$iddetails[$key]
-				);
-					$this->v_model->m_update($where,$data,'v_table_details');
-				}
-				else{
-					$data['id'] = $id;
+						'id' => $id,
+						'iddetails'=>$iddetails[$key],
+					);
+					$this->v_model->hapus_data($where,'v_table_details');
+				} else{
+					if(isset($iddetails[$key])){
+						$where = array(
+							'id' => $id,
+							'iddetails'=>$iddetails[$key]
+						);
+						$this->v_model->m_update($where,$data,'v_table_details');
+					}
+					else{
+						$data['id'] = $id;
 
-					$this->v_model->input_data($data,'v_table_details');
-				}	
+						$this->v_model->input_data($data,'v_table_details');
+					}
+				}
 			}
 
 			if ($updt==TRUE) {
